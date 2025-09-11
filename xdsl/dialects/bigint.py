@@ -2,7 +2,7 @@
 
 import abc
 
-from xdsl.dialects.builtin import IntAttr, f64, i1
+from xdsl.dialects.builtin import IntAttr, IntegerType, f64, i1
 from xdsl.ir import (
     Dialect,
     Operation,
@@ -70,6 +70,24 @@ class ConstantOp(IRDLOperation):
             operands=[], result_types=[bigint], properties={"value": value}
         )
 
+@irdl_op_definition
+class ToIntOp(IRDLOperation):
+    name = "bigint.to_int"
+    result = result_def(IntegerType)
+    value = operand_def(BigIntegerType)
+
+    traits = traits_def(Pure())
+
+    assembly_format = "attr-dict $value `:` type($result)"
+
+    def __init__(
+        self,
+        value: Operation | SSAValue,
+        type: IntegerType = IntegerType(64),
+    ):
+        super().__init__(
+            operands=[value], result_types=[type]
+        )
 
 @irdl_op_definition
 class AddOp(BinaryOperation):
